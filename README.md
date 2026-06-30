@@ -39,6 +39,7 @@ Read in order; each builds on the last.
 6. [`docs/06-technology-justifications.md`](docs/06-technology-justifications.md) — per-component scorecard (performance / simplicity / portability / reusability / accuracy)
 7. [`docs/07-decisions.md`](docs/07-decisions.md) — ADR-style record of the settled decisions
 8. [`docs/08-open-questions-and-roadmap.md`](docs/08-open-questions-and-roadmap.md) — what's unresolved, build sequence
+9. [`docs/09-aidlc-takeaways.md`](docs/09-aidlc-takeaways.md) — AWS AI-DLC research + takeaways (adaptive pipeline, verification sections, rule projection)
 
 ---
 
