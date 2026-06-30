@@ -78,6 +78,46 @@ The execution + learning half is also drafted:
 
 **The full pipeline is now drafted** — all 9 phase subagents + 2 skills. `intake → analysis → design → self_critique → spec → ⟦approve⟧ → build → review → learn → ⟦approve⟧ → curate` runs end-to-end on paper, and the **outer feedback loop closes**: a completed task proposes memory that, once approved, sharpens future tasks. Next: real end-to-end testing, then optional hooks (`docs/04` §4.4).
 
+## How to run it (fresh Claude Code)
+
+> Strawman — validated on paper, not yet hardened by live runs. Expect to iterate on the agent prompts.
+
+**Prerequisites**
+- [Claude Code](https://claude.com/claude-code) (CLI or IDE extension) with an active Claude login.
+- `git` and `python3` (3.11+) — Python is only used by the `score-requirements` skill.
+
+**Setup**
+1. Clone and enter the repo:
+   ```bash
+   git clone https://github.com/mohantyajitesh/aj_solution_architect_agent_low_code.git
+   cd aj_solution_architect_agent_low_code
+   ```
+2. **Launch Claude Code from the repo root.** It auto-discovers the orchestrator (`AGENTS.md`), the subagents (`.claude/agents/`), and the `/sdd` command (`.claude/commands/`). The two skills under `skills/` are invoked by the agents directly — `score-requirements` by script path, `memory-retrieve` as a documented procedure — so no extra registration is needed.
+3. **Tailor it to your org before the first real run** (recommended):
+   - Fill in `AGENTS.md` **§8** (always-on organizational constraints — your platform commitments, hard boundaries).
+   - Replace the placeholders in `memory/assets/hcm-system-service.md` (report names, endpoints, the ABC schema), or delete it and add your own assets/standards under `memory/`.
+4. *(Optional)* Sanity-check the scoring skill:
+   ```bash
+   echo '{"dimensions":{"a":{"score":80,"rating":"clear","blocking":false}}}' \
+     | python3 skills/score-requirements/score.py
+   ```
+
+**Run a task**
+1. In Claude Code: `/sdd "<your requirement>"` (or a path to a requirements file).
+2. The agent **triages**, states a right-sized plan, and runs the pipeline.
+3. Respond at the **gates**:
+   - *Clarification* (if requirements score low or have a blocking gap) — answer the questions.
+   - *Spec approval* — `approve`, or `reject: <feedback>` to loop back to design.
+   - *Memory approval* — `approve` to save the proposed lessons, or `skip`.
+4. Artifacts land in `workspace/<task-id>/`; approved memory lands in `memory/`. **Commit memory to persist the learning:**
+   ```bash
+   git add memory && git commit -m "Memory from <task>"
+   ```
+
+**Good to know**
+- Control is currently **soft** — instructions + per-phase Verification self-checks. If you see the agent build before approval or loop too long, that's the signal to add the optional hooks in [`docs/04` §4.4](docs/04-control-and-enforcement.md).
+- Everything is plain files: `workspace/` is per-task scratch; `memory/` is your durable, git-versioned knowledge base.
+
 ## The one-paragraph thesis
 
 The original design's value was an **enforced** pipeline — control flow guaranteed *outside* the LLM. A low-code Claude-native rebuild necessarily converts those hard structural guarantees into **subagent-orchestrated, instruction-driven** guarantees: softer, but recoverable to ~90% via hooks if and when we choose to add them. In exchange we get dramatically less code, cleaner per-phase context (subagents beat nodes for context isolation), zero retrieval infrastructure (vectorless memory), native human gates, and first-class distribution (plugins). We accept two conscious costs: **Claude lock-in** (the provider abstraction is gone) and **soft process enforcement until hooks are added**. Both are deliberate, reversible, and justified for a single-user conversational architect tool.
