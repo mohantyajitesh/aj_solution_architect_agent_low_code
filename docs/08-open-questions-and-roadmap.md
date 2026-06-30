@@ -43,10 +43,13 @@ This design is a **draft for collaborative review**. This document lists what is
 - ✅ `analysis` ([`.claude/agents/analysis.md`](../.claude/agents/analysis.md)) — problem-space framing; ANL-01..04; stays out of solution space
 - ✅ `self_critique` ([`.claude/agents/self_critique.md`](../.claude/agents/self_critique.md)) — multi-angle, routing verdict, honest-not-default-PASS; CRIT-01..04
 - ✅ `spec` ([`.claude/agents/spec.md`](../.claude/agents/spec.md)) — implementation contract, design-traceable (SPEC-04); SPEC-01..04
+- ✅ `build` ([`.claude/agents/build.md`](../.claude/agents/build.md)) — implements the approved spec into `src/`; only phase with code/Bash; BLD-01..04
+- ✅ `review` ([`.claude/agents/review.md`](../.claude/agents/review.md)) — spec-vs-build verdict (CLEAN/SPEC_DRIFT); REV-01..03
+- ✅ `learn` ([`.claude/agents/learn.md`](../.claude/agents/learn.md)) — proposes memory + asset-catalog updates (propose-only); LRN-01..04
+- ✅ `memory-curator` ([`.claude/agents/memory-curator.md`](../.claude/agents/memory-curator.md)) — files entries, regenerates INDEX.md, normalizes tags/links; CUR-01..03
 - ✅ `score-requirements` skill ([`skills/score-requirements/`](../skills/score-requirements/SKILL.md)) — deterministic confidence + hard-gap gate (tested)
-- ⬜ `build` → `review` → `learn` + `memory-curator`
-- ⬜ `memory-retrieve` skill
-- **Reasoning chain complete:** `intake → analysis → design → self_critique → spec` is now drafted — the first end-to-end `/sdd` run to the spec-approval gate is testable (success criteria S1–S3).
+- ✅ `memory-retrieve` skill ([`skills/memory-retrieve/`](../skills/memory-retrieve/SKILL.md)) — canonical index-first retrieval used by all phases
+- **Full pipeline drafted:** all 9 phase subagents + 2 skills exist. `intake → … → learn → curate` is end-to-end on paper; the **outer feedback loop closes** (a completed task proposes memory that, once approved, sharpens future tasks).
 - *Validated on paper:* a dry-run (Oracle HCM → BenefitsCo) surfaced F1–F4; all applied. The reuse analysis correctly rejected a greenfield poller in favor of extending HCM System Service.
 - *Exit test:* a simple requirement flows end-to-end and writes all artifacts (success criteria S1–S3).
 

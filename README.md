@@ -69,7 +69,14 @@ A first runnable skeleton now exists alongside the design:
 - [`.claude/agents/spec.md`](.claude/agents/spec.md) — the implementation contract, traceable to the design (`SPEC-01..04`).
 - [`skills/score-requirements/`](skills/score-requirements/SKILL.md) — deterministic confidence + hard-gap gate (tested).
 
-The first end-to-end `/sdd` run to the spec-approval gate is now testable. Remaining: `build`, `review`, `learn`, `memory-curator`, and the `memory-retrieve` skill.
+The execution + learning half is also drafted:
+- [`.claude/agents/build.md`](.claude/agents/build.md) — implements the *approved* spec into `src/` (the one phase with code/Bash; `BLD-01..04`).
+- [`.claude/agents/review.md`](.claude/agents/review.md) — spec-vs-build verdict CLEAN/SPEC_DRIFT (`REV-01..03`).
+- [`.claude/agents/learn.md`](.claude/agents/learn.md) — proposes memory + asset-catalog updates, propose-only (`LRN-01..04`).
+- [`.claude/agents/memory-curator.md`](.claude/agents/memory-curator.md) — files entries, regenerates `INDEX.md`, normalizes tags/links (`CUR-01..03`).
+- [`skills/memory-retrieve/`](skills/memory-retrieve/SKILL.md) — canonical index-first retrieval used by every phase.
+
+**The full pipeline is now drafted** — all 9 phase subagents + 2 skills. `intake → analysis → design → self_critique → spec → ⟦approve⟧ → build → review → learn → ⟦approve⟧ → curate` runs end-to-end on paper, and the **outer feedback loop closes**: a completed task proposes memory that, once approved, sharpens future tasks. Next: real end-to-end testing, then optional hooks (`docs/04` §4.4).
 
 ## The one-paragraph thesis
 
