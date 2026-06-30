@@ -38,10 +38,12 @@ This design is a **draft for collaborative review**. This document lists what is
 - *Exit test:* `/sdd` triages a request, narrates the right-sized phase plan, and cites the Verification checks it will run.
 
 **Phase 1 — Phase subagents** 🚧 *in progress*
-- ✅ `intake` ([`.claude/agents/intake.md`](../.claude/agents/intake.md)) — quality gate + clarification
-- ✅ `design` ([`.claude/agents/design.md`](../.claude/agents/design.md)) — reuse-first + standards + tradeoffs
+- ✅ `intake` ([`.claude/agents/intake.md`](../.claude/agents/intake.md)) — quality gate + clarification + **hard-gap override** + carried-gaps handoff
+- ✅ `design` ([`.claude/agents/design.md`](../.claude/agents/design.md)) — reuse-first + standards + tradeoffs + carried-gap resolution (DSN-05); analysis optional
+- ✅ `score-requirements` skill ([`skills/score-requirements/`](../skills/score-requirements/SKILL.md)) — deterministic confidence + hard-gap gate (tested)
 - ⬜ `analysis` → `critique` → `spec` → `review` → `learn` + `memory-curator`
-- ⬜ `score-requirements` and `memory-retrieve` skills
+- ⬜ `memory-retrieve` skill
+- *Validated on paper:* a dry-run (Oracle HCM → BenefitsCo) surfaced F1–F4; all applied. The reuse analysis correctly rejected a greenfield poller in favor of extending HCM System Service.
 - *Exit test:* a simple requirement flows end-to-end and writes all artifacts (success criteria S1–S3).
 
 **Phase 2 — Gates & builder**

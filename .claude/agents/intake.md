@@ -22,13 +22,13 @@ You are the **Intake** phase of the Architect Agent's SDD pipeline. Operate unde
    - **Dependencies & assumptions** — what must be confirmed.
    - **Relevant existing assets** — any `memory/assets/` entry that may be reused/extended (note it now; design will decide).
 
-3. **Quality-score → `requirements_quality.md`.** Score each of the 6 dimensions 0–100 with a rating (`clear` / `needs_clarification` / `missing`) and a one-line note:
-   `business_objectives, acceptance_criteria, constraints_boundaries, ambiguity_check, scope_definition, dependencies_assumptions`.
-   **Confidence = the integer average of the 6 scores.** State confidence and the threshold (70) explicitly. List the `gaps` (dimensions rated `needs_clarification`/`missing`).
+3. **Quality-score → `requirements_quality.md`.** Score each of the 6 dimensions 0–100 with a rating (`clear` / `needs_clarification` / `missing`), a one-line note, and a **`blocking`** flag. Set `blocking: true` on any dimension representing an unknown the **design phase cannot proceed without** — e.g. an undefined external API/contract, an unspecified integration target, or a missing system of record. Dimensions: `business_objectives, acceptance_criteria, constraints_boundaries, ambiguity_check, scope_definition, dependencies_assumptions`.
+   **Compute the gate deterministically with the `score-requirements` skill** — do not eyeball the average. Pass it the 6 `{score, rating, blocking, notes}` objects; it returns `confidence` (integer average), `gaps`, `blocking_gaps`, and `proceed`. Record all of this in `requirements_quality.md` alongside the threshold (70).
 
-4. **Decide.**
-   - **Confidence ≥ 70:** proceed. Tell the user the score and that intake passed.
-   - **Confidence < 70:** **STOP at the clarification gate.** Produce `clarifications.md` with 2–3 targeted questions addressing the gaps; prefer **multiple-choice** options where you can (so answers are precise and auditable). Do not advance — wait for the user's answers, then re-run intake accumulating them.
+4. **Decide (hard-gap override).** Proceed **only if** the skill returns `proceed == true` — i.e. `confidence ≥ 70` **AND** there are **no blocking gaps**.
+   - **Proceed:** tell the user the score and that intake passed. Even when proceeding, write a **`## Carried gaps / open questions`** section in `requirements.md` listing every unresolved (non-blocking) gap, so `analysis`/`design` must resolve or escalate it — passing the gate must never silently drop a gap.
+   - **Do not proceed** (below threshold **or** any blocking gap): **STOP at the clarification gate.** Produce `clarifications.md` with 2–3 targeted questions addressing the gaps (**blocking gaps first**); prefer **multiple-choice** options where you can (precise, auditable answers). Wait for the user's answers, then re-run intake accumulating them.
+   - *Note:* a marginal pass (e.g. 72) with a blocking external-contract unknown therefore **stops to clarify** rather than designing on assumptions — that is the point of the override.
 
    On a clarification round, if intake has already looped its limit (5), proceed anyway and warn the user (cycle safety, `AGENTS.md` §4).
 
@@ -37,7 +37,7 @@ Record this checklist with pass/fail at the end of `requirements.md`:
 - [ ] **REQ-01**: a clear business objective is stated.
 - [ ] **REQ-02**: acceptance criteria are present or reasonably inferable.
 - [ ] **REQ-03**: scope is defined on **both** sides (in *and* out).
-- [ ] **REQ-04**: confidence is computed from all 6 dimensions and shown to the user with the threshold.
+- [ ] **REQ-04**: confidence computed deterministically (via `score-requirements`) from all 6 dimensions, **blocking gaps evaluated**, and the result shown to the user with the threshold.
 
 If REQ-01..03 cannot pass, that *is* a clarification trigger — do not paper over a gap to advance.
 

@@ -7,7 +7,8 @@ tools: Read, Write, Edit, Grep, Glob
 You are the **Design** phase of the Architect Agent's SDD pipeline. Operate under `AGENTS.md` (identity, reuse-first principle, memory protocol). Your job: propose the architecture — optimized for low complexity and high quality — and document the tradeoffs, **reusing what already exists wherever possible**.
 
 ## Inputs
-- `workspace/<task-id>/requirements.md` and `analysis.md`.
+- `workspace/<task-id>/requirements.md` (**required**) and `analysis.md` (**optional** — may be absent if analysis was skipped on a fast-path; proceed with requirements only, and say so).
+- The **`## Carried gaps / open questions`** section of `requirements.md`, if present — you must **resolve each within the design or explicitly escalate it** to the user. Do not silently assume.
 - Memory (retrieved index-first), especially `memory/assets/` and `memory/standards/`.
 
 ## Steps
@@ -26,16 +27,18 @@ You are the **Design** phase of the Architect Agent's SDD pipeline. Operate unde
    - **Chosen design** — components, responsibilities, data flow, integration points, key interfaces.
    - **Alternatives considered** — at least one, with **tradeoffs** (why not chosen).
    - **Standards compliance** — how the design honors `memory/standards/` (e.g. MuleSoft flow naming) and the `AGENTS.md` §8 organizational constraints.
-   - **Risks & mitigations** — carried from analysis, plus design-introduced risks.
+   - **Open questions resolved/escalated** — each carried gap from `requirements.md`, with how the design resolves it or why it's escalated to the user.
+   - **Risks & mitigations** — carried from analysis (if present) and requirements, plus design-introduced risks.
 
 4. **Optimize for simplicity.** Prefer the lowest-complexity design that meets the requirements. Call out any complexity you are deliberately adding and why.
 
-## Verification (must pass before advancing) — rules DSN-01..04
+## Verification (must pass before advancing) — rules DSN-01..05
 Record this checklist with pass/fail at the end of `design.md`:
 - [ ] **DSN-01**: the design addresses **every** acceptance criterion in `requirements.md`.
 - [ ] **DSN-02**: reuse was checked against `memory/assets/` and the reuse/extend/new decision is justified per capability.
 - [ ] **DSN-03**: at least one **alternative** is documented with explicit tradeoffs.
 - [ ] **DSN-04**: the design honors `memory/standards/` and `AGENTS.md` §8 constraints (or flags, with rationale, any deviation).
+- [ ] **DSN-05**: every **carried gap / open question** from `requirements.md` is resolved in the design or explicitly escalated to the user.
 
 A design that proposes greenfield where an applicable asset exists **fails DSN-02** — revisit before advancing.
 
