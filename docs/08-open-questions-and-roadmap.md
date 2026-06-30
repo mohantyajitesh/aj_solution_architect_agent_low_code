@@ -40,9 +40,13 @@ This design is a **draft for collaborative review**. This document lists what is
 **Phase 1 — Phase subagents** 🚧 *in progress*
 - ✅ `intake` ([`.claude/agents/intake.md`](../.claude/agents/intake.md)) — quality gate + clarification + **hard-gap override** + carried-gaps handoff
 - ✅ `design` ([`.claude/agents/design.md`](../.claude/agents/design.md)) — reuse-first + standards + tradeoffs + carried-gap resolution (DSN-05); analysis optional
+- ✅ `analysis` ([`.claude/agents/analysis.md`](../.claude/agents/analysis.md)) — problem-space framing; ANL-01..04; stays out of solution space
+- ✅ `self_critique` ([`.claude/agents/self_critique.md`](../.claude/agents/self_critique.md)) — multi-angle, routing verdict, honest-not-default-PASS; CRIT-01..04
+- ✅ `spec` ([`.claude/agents/spec.md`](../.claude/agents/spec.md)) — implementation contract, design-traceable (SPEC-04); SPEC-01..04
 - ✅ `score-requirements` skill ([`skills/score-requirements/`](../skills/score-requirements/SKILL.md)) — deterministic confidence + hard-gap gate (tested)
-- ⬜ `analysis` → `critique` → `spec` → `review` → `learn` + `memory-curator`
+- ⬜ `build` → `review` → `learn` + `memory-curator`
 - ⬜ `memory-retrieve` skill
+- **Reasoning chain complete:** `intake → analysis → design → self_critique → spec` is now drafted — the first end-to-end `/sdd` run to the spec-approval gate is testable (success criteria S1–S3).
 - *Validated on paper:* a dry-run (Oracle HCM → BenefitsCo) surfaced F1–F4; all applied. The reuse analysis correctly rejected a greenfield poller in favor of extending HCM System Service.
 - *Exit test:* a simple requirement flows end-to-end and writes all artifacts (success criteria S1–S3).
 

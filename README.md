@@ -61,11 +61,15 @@ A first runnable skeleton now exists alongside the design:
 - [`AGENTS.md`](AGENTS.md) — the orchestrator: persona + **adaptive pipeline (triage)** + **Verification gates** + human gates + the index-first/reuse-first memory protocol. (Adaptive pipeline and Verification adopted from AWS AI-DLC — see [`docs/09`](docs/09-aidlc-takeaways.md), [ADR-10](docs/07-decisions.md).)
 - [`.claude/commands/sdd.md`](.claude/commands/sdd.md) — the `/sdd "<requirement>"` entry point that triages, states a right-sized plan, and runs the pipeline against the seeded memory.
 
-**Phase 1 (in progress)** — the first two phase subagents are drafted:
-- [`.claude/agents/intake.md`](.claude/agents/intake.md) — structures + quality-scores the requirement, runs the clarification gate, carries `REQ-01..04` Verification.
-- [`.claude/agents/design.md`](.claude/agents/design.md) — reuse-first analysis against the asset catalog, tradeoffs + alternatives, standards compliance, `DSN-01..04` Verification.
+**Phase 1 (in progress)** — the full **reasoning chain** is drafted: `intake → analysis → design → self_critique → spec`.
+- [`.claude/agents/intake.md`](.claude/agents/intake.md) — structures + quality-scores the requirement, hard-gap override, clarification gate (`REQ-01..04`).
+- [`.claude/agents/analysis.md`](.claude/agents/analysis.md) — frames the problem space (scope/constraints/dependencies/risks), stays out of solution space (`ANL-01..04`).
+- [`.claude/agents/design.md`](.claude/agents/design.md) — reuse-first analysis, tradeoffs + alternatives, standards compliance, carried-gap resolution (`DSN-01..05`).
+- [`.claude/agents/self_critique.md`](.claude/agents/self_critique.md) — multi-angle challenge, routing verdict (PASS/FAIL_*), honest-not-default-PASS (`CRIT-01..04`).
+- [`.claude/agents/spec.md`](.claude/agents/spec.md) — the implementation contract, traceable to the design (`SPEC-01..04`).
+- [`skills/score-requirements/`](skills/score-requirements/SKILL.md) — deterministic confidence + hard-gap gate (tested).
 
-Remaining subagents (`analysis`, `self_critique`, `spec`, `build`, `review`, `learn`, `memory-curator`) and the thin skills are next.
+The first end-to-end `/sdd` run to the spec-approval gate is now testable. Remaining: `build`, `review`, `learn`, `memory-curator`, and the `memory-retrieve` skill.
 
 ## The one-paragraph thesis
 
