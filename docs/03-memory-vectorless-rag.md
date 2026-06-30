@@ -33,6 +33,54 @@ In increasing order of how much we lean on each:
 
 A single canonical retrieval procedure (`skills/memory-retrieve`) ensures every phase retrieves the same way: *read INDEX → select by tag/summary relevance → optionally grep → read selected files → optionally follow links.*
 
+## 3.3a Token economics — retrieval is index-first, always
+
+Vectorless retrieval is cheap **only if it never loads the whole corpus.** The cost is governed by the retrieval *pattern*, not the file format. There are two patterns, with very different cost curves:
+
+| Pattern | Loaded per retrieval | Cost | Verdict |
+|---|---|---|---|
+| **Naive** ("read everything") | the entire corpus into context | O(total entries) | ❌ the expensive failure mode — **forbidden** |
+| **Index-first** (this design) | one compact index → then only the ~3–5 selected entries | O(index) + O(k) | ✅ cheap and bounded |
+
+**Index-first is mandatory, not optional.** The `memory-retrieve` skill must always (1) read a compact index, (2) select the few relevant entries, then (3) open only those. A phase must never `cat memory/**` or read all files to "find" something.
+
+### The cost math
+
+Assume an index line ≈ 30 tokens and a full entry ≈ 500 tokens; fetch ~4 entries per retrieval:
+
+| Corpus | Flat index (Stage 1) | Fetch ~4 entries (Stage 2) | Total / retrieval |
+|---|---|---|---|
+| 30 entries | ~0.9k | ~2k | **~3k** — negligible |
+| 300 entries | ~9k | ~2k | ~11k — noticeable |
+| 2,000 entries | ~60k | ~2k | ~62k — expensive |
+
+The cost that *grows* is **Stage 1 (reading the index)**, because a flat index is O(n). Stage 2 is always just the top few entries, so it stays flat regardless of corpus size.
+
+### When to switch the index to a derived tree
+
+The JSON/hierarchical tree is a **scale optimization for the index**, not a prerequisite for affordability. A *hierarchical* index (by category/branch) lets the model descend only the relevant branch instead of reading the whole index — turning Stage 1 from O(n) toward O(branch):
+
+- 2,000 entries, flat index → ~60k tokens just to look
+- 2,000 entries, descend one ~50-entry category → ~1.5k tokens
+
+**Crossover thresholds (the recurring rule of thumb):**
+
+| Corpus size | Index strategy |
+|---|---|
+| dozens | flat `INDEX.md` — tree saves nothing worth doing |
+| hundreds | **curator-derived hierarchical index** (JSON or nested markdown) to keep Stage 1 lean |
+| thousands | reconsider a **memory MCP** (vector search) behind the same `memory-retrieve` interface |
+
+The curator-derived index is a **derived artifact** (markdown stays source of truth) — regenerated from front-matter, cheap to inspect, and a drop-in because the retrieval interface doesn't change.
+
+### Three additional cost levers (mostly already in the design)
+
+1. **Prompt caching** — the index is stable between edits, so after the first read it is nearly free to re-read within a session.
+2. **Subagent isolation** — memory loads into the specific phase subagent that needs it, not dragged through the whole conversation, so retrieval cost does not compound across phases.
+3. **Atomic entries** — one asset/lesson per file keeps each Stage-2 fetch lean (you pull one asset, not a 60-page document).
+
+**Bottom line:** affordability comes from index-first retrieval (Stage 1 + Stage 2), which is mandatory here; the derived tree is what stops the *index itself* from getting fat once the corpus reaches the hundreds. You do not need the tree to be cheap today — you need to never read the whole corpus.
+
 ## 3.4 Memory layout
 
 ```
