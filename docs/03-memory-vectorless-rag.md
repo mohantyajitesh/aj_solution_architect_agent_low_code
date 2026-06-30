@@ -86,13 +86,22 @@ The curator-derived index is a **derived artifact** (markdown stays source of tr
 ```
 memory/
 ├── INDEX.md                    # maintained table of contents (the retrieval entry point)
-├── lessons/
+├── README.md                   # conventions (points here, to docs/03)
+├── assets/                     # capability catalog — systems/apps we already own (reuse-first)
+│   ├── hcm-system-service.md
+│   └── samples/                # dummy data / example payloads (sanitized)
+│       └── hcm-abc-sample.json
+├── standards/                  # org dev standards & architectural practices (authority: reference)
+│   └── mulesoft-flow-naming.md
+├── lessons/                    # agent-learned experience (dated, task-derived)
 │   └── 2026-06-29_task-ab12_lesson-provider-abstraction.md
 ├── decisions/
 │   └── 2026-06-29_task-ab12_adr-vectorless-memory.md
 └── patterns/
     └── 2026-06-29_task-ab12_pattern-event-driven-integration.md
 ```
+
+The first three categories (`assets`, `standards`, plus future reference content) are typically **human-authored organizational knowledge**; the last three (`lessons`, `decisions`, `patterns`) are typically **agent-generated experience**. They share one store and one retrieval path, but differ in authoring and trust — see §3.6a.
 
 ### Entry format (with front-matter for filtering)
 ```markdown
@@ -149,6 +158,80 @@ This converts "curation discipline" from a hope into an automated housekeeping s
 5. `git commit` (optionally `push`) captures the new knowledge — versioned and shareable.
 
 This mirrors the original's propose/approve lifecycle but removes the reindex-into-ChromaDB step entirely; "reindex" is now just "regenerate `INDEX.md`," a markdown operation.
+
+## 3.6a Enriching memory with organizational context
+
+Memory is **not only agent-generated.** Because entries are plain markdown, you can hand-author or bulk-import organizational knowledge — existing systems, dev standards, architectural practices — and the agent gets smarter as the corpus grows. This is a deliberate strength of the file-based design (a black-box vector DB makes manual enrichment awkward; files make it a PR + `git commit`).
+
+### Two new categories
+- **`assets`** — a **capability catalog** of systems/apps you already own. Purpose: *reuse-awareness* — the agent should recognize "we already have a thing that does most of this" and extend it rather than design greenfield.
+- **`standards`** — dev standards & architectural practices the agent must honor as constraints.
+
+### First decide *where* knowledge belongs — not everything goes in memory
+
+| Knowledge type | Goes in | Why |
+|---|---|---|
+| **Always-true constraints** ("AWS shop, never propose Azure"; "all integrations via MuleSoft") | **`AGENTS.md`** (orchestrator) | Always in context, applied every task — retrieval is probabilistic; a hard rule must not depend on it surfacing |
+| **Situational knowledge** (a system's quirks, a past design, one team's convention) | **memory store** | Relevant only *sometimes*; retrieved when the task touches it |
+
+The rule: **always-applicable → orchestrator; situationally-relevant → memory.**
+
+### Extended front-matter for reference content
+Human-authored entries add a few fields so retrieval and trust work correctly:
+```yaml
+source: human            # human | agent
+authority: reference     # reference (authored, authoritative) | experience (agent-learned)
+status: in-production    # for assets: in-production | deprecated | planned
+systems: [oracle-hcm, sql-server, mulesoft]   # retrieval hooks
+```
+`AGENTS.md` instructs the agent to treat `authority: reference` entries as **constraints that outrank a one-off experiential lesson** on conflict.
+
+### Filename convention
+- **Experiential** (agent-generated `lessons`/`decisions`/`patterns`): keep the dated `YYYY-MM-DD_task-id_category-slug.md` convention.
+- **Reference** (`assets`/`standards`): use a **clean slug** (`hcm-system-service.md`) — they aren't task-derived, and a stable name makes them easy to link and update.
+
+### Atomic, not bulk
+Split big documents into focused entries (the no-vector equivalent of chunking). A 60-page standards PDF as one file retrieves badly — it either gets pulled wholesale (blowing context) or never matches cleanly. Prefer `mulesoft-flow-naming.md`, `approved-aws-services.md`, `integration-error-handling.md`.
+
+### Asset entry template (capability catalog)
+The field that actually changes behavior is **when to use / when NOT to use** — that's what lets the agent *apply* an asset, not just know it exists.
+```markdown
+---
+title: <System name> (<platform>)
+category: assets
+source: human
+authority: reference
+status: in-production
+systems: [<system>, <system>, ...]
+tags: [<domain>, <pattern>, reuse-candidate]
+links: [[<related-pattern-or-asset>]]
+---
+# <System name>
+
+## What it does (capability)
+<one-paragraph capability statement>
+
+## Flow
+1. ... 2. ... 3. ...
+
+## Interfaces
+- In: ...   Out: ...   Data contract: see `samples/<file>` (dummy data)
+
+## When to USE this
+- <triggering conditions>
+
+## When NOT to use this
+- <exclusions>
+
+## Reuse / extension notes
+- <how to extend rather than rebuild>
+```
+
+### Reuse-first behavior (the behavioral hook)
+A catalog is passive until the orchestrator is told to use it. `AGENTS.md` carries the rule (see [`docs/02` §2.2.1](02-architecture.md)): *during analysis and design, consult the asset catalog and prefer reusing/extending an existing asset over a greenfield build; surface the reuse option explicitly.* This turns the catalog into a **reuse-first design analysis** — arguably the highest-value behavior for an organization with an existing system landscape.
+
+### Caveat: this is what grows the corpus
+Organizational enrichment (asset inventories, full standards, many patterns) is exactly what pushes corpus size up — toward the §3.3a token thresholds and the §3.7 vector crossover. Enrich freely, lean on the curator and index-first retrieval, and treat a fat *index* (not fat entries) as the signal to switch to a derived hierarchical index. Reference content also needs a **human owner** for freshness; git provides the audit trail, the curator provides housekeeping, but neither guarantees correctness.
 
 ## 3.7 When we would revisit vectors
 

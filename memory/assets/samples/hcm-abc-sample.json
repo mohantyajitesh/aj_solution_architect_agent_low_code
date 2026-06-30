@@ -1,0 +1,40 @@
+{
+  "_comment": "DUMMY DATA — illustrative ABC-format payload persisted by XYZ API into SQL Server. No real PII. Replace with the authoritative schema/sample.",
+  "abcRecord": {
+    "recordType": "WORKER",
+    "sourceEvent": {
+      "feed": "oracle-hcm-atom",
+      "personId": "100000001",
+      "eventType": "WORKER_UPDATED",
+      "eventTimestamp": "2026-06-29T10:15:30Z"
+    },
+    "worker": {
+      "personNumber": "EMP-0001",
+      "firstName": "Jordan",
+      "lastName": "Sample",
+      "email": "jordan.sample@example.com",
+      "hireDate": "2024-01-15",
+      "employmentType": "FR",
+      "status": "ACTIVE"
+    },
+    "assignment": {
+      "businessUnit": "BU-100",
+      "department": "DEPT-200",
+      "jobCode": "JOB-3001",
+      "positionId": "POS-4001",
+      "locationId": "LOC-500",
+      "managerPersonNumber": "EMP-0009"
+    },
+    "compensation": {
+      "salaryBasis": "US Annual Salary",
+      "amount": 95000,
+      "currency": "USD"
+    },
+    "persistence": {
+      "targetSystem": "sql-server",
+      "table": "dbo.WorkerAbc",
+      "writeMode": "UPSERT",
+      "naturalKey": "personNumber"
+    }
+  }
+}

@@ -40,7 +40,7 @@ The single source of truth for *identity* and *process*. It carries:
 - the **persona** (senior solution architect — ported verbatim from the original `persona.md`),
 - the **pipeline contract**: the canonical phase order, what each phase consumes/produces, and the loop-back rules (when critique fails, return to design/analysis/intake; when review finds drift, return to build),
 - the **gate rules**: where to stop and ask the human (spec approval, memory write), and
-- the **memory protocol**: consult `memory/INDEX.md` at task start and at each reasoning phase; propose new memory only at `learn`.
+- the **memory protocol**: consult `memory/INDEX.md` at task start and at each reasoning phase; **during analysis and design, consult the asset catalog (`category: assets`) and prefer reusing or extending an existing asset over a greenfield build, surfacing the reuse option explicitly** ("reuse-first"); treat `authority: reference` entries (`assets`, `standards`) as **constraints that outrank one-off experiential lessons** on conflict; propose new memory only at `learn`.
 
 `AGENTS.md` is chosen over a Claude-only filename deliberately — it is an emerging cross-tool standard (read by Claude Code, and by other agentic IDEs), which buys portability "for free" (see [`docs/05`](05-portability-and-distribution.md)).
 

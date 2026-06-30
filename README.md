@@ -42,6 +42,17 @@ Read in order; each builds on the last.
 
 ---
 
+## Seeded memory example
+
+The repo includes a small **seeded memory store** ([`memory/`](memory/)) so retrieval can be designed against something concrete — not just described:
+
+- [`memory/assets/hcm-system-service.md`](memory/assets/hcm-system-service.md) — a **capability-catalog** entry for an existing MuleSoft integration (Oracle HCM → SQL Server), with explicit *when-to-use / when-NOT-to-use* fields that drive **reuse-first** design.
+- [`memory/standards/mulesoft-flow-naming.md`](memory/standards/mulesoft-flow-naming.md) — a **standards** entry the agent treats as a constraint.
+- [`memory/INDEX.md`](memory/INDEX.md) — the index-first retrieval entry point.
+- [`memory/README.md`](memory/README.md) — categories and conventions.
+
+This demonstrates manual enrichment with **organizational context** — see [`docs/03` §3.6a](docs/03-memory-vectorless-rag.md).
+
 ## The one-paragraph thesis
 
 The original design's value was an **enforced** pipeline — control flow guaranteed *outside* the LLM. A low-code Claude-native rebuild necessarily converts those hard structural guarantees into **subagent-orchestrated, instruction-driven** guarantees: softer, but recoverable to ~90% via hooks if and when we choose to add them. In exchange we get dramatically less code, cleaner per-phase context (subagents beat nodes for context isolation), zero retrieval infrastructure (vectorless memory), native human gates, and first-class distribution (plugins). We accept two conscious costs: **Claude lock-in** (the provider abstraction is gone) and **soft process enforcement until hooks are added**. Both are deliberate, reversible, and justified for a single-user conversational architect tool.

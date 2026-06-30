@@ -81,3 +81,13 @@ Short, ADR-style records of the settled decisions behind this design. Each: cont
 **Decision.** Package agents + commands + thin skills + `AGENTS.md` + memory seed as a **Claude Code plugin**.
 
 **Consequences.** (+) One-step install, no infra, marketplace-shareable, keeps the Cowork door open. (−) Plugin packaging is Claude-Code-specific (but the underlying markdown remains portable).
+
+---
+
+## ADR-09 — Organizational-context categories (`assets`, `standards`) + reuse-first behavior
+
+**Context.** Memory can be hand-enriched with organizational knowledge — existing systems we own, dev standards, architectural practices — not just agent-generated lessons. We want the agent to *reuse* existing assets instead of designing duplicates, and to *obey* org standards.
+
+**Decision.** Add two human-authored categories: **`assets`** (a capability catalog with explicit "when to use / when NOT to use" fields) and **`standards`**. Extend front-matter with `source`, `authority`, `status`, `systems`. Reference content uses clean-slug filenames (not the dated/task convention). `AGENTS.md` instructs **reuse-first** design (consult the asset catalog during analysis/design; prefer extend over greenfield) and treats `authority: reference` entries as constraints that outrank experiential lessons on conflict. Always-true constraints go in `AGENTS.md`, not memory; situational knowledge goes in memory.
+
+**Consequences.** (+) The agent performs reuse analysis against the real system landscape, avoiding duplicate builds, and honors org standards. (+) Human-curatable, git-versioned knowledge base. (−) Grows the corpus faster → approaches the token/vector crossover sooner (mitigated by index-first retrieval + the curator + a derived hierarchical index). (−) Reference content needs a human owner for freshness; tooling provides audit trail and housekeeping, not correctness.
