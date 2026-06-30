@@ -37,9 +37,11 @@ This design is a **draft for collaborative review**. This document lists what is
 - `workspace/` + seeded `memory/` (`INDEX.md`, asset catalog, standard)
 - *Exit test:* `/sdd` triages a request, narrates the right-sized phase plan, and cites the Verification checks it will run.
 
-**Phase 1 — Phase subagents**
-- `intake` → `analysis` → `design` → `critique` → `spec` → `review` → `learn` + `memory-curator`
-- `score-requirements` and `memory-retrieve` skills
+**Phase 1 — Phase subagents** 🚧 *in progress*
+- ✅ `intake` ([`.claude/agents/intake.md`](../.claude/agents/intake.md)) — quality gate + clarification
+- ✅ `design` ([`.claude/agents/design.md`](../.claude/agents/design.md)) — reuse-first + standards + tradeoffs
+- ⬜ `analysis` → `critique` → `spec` → `review` → `learn` + `memory-curator`
+- ⬜ `score-requirements` and `memory-retrieve` skills
 - *Exit test:* a simple requirement flows end-to-end and writes all artifacts (success criteria S1–S3).
 
 **Phase 2 — Gates & builder**

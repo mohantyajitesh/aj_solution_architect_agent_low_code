@@ -61,7 +61,11 @@ A first runnable skeleton now exists alongside the design:
 - [`AGENTS.md`](AGENTS.md) — the orchestrator: persona + **adaptive pipeline (triage)** + **Verification gates** + human gates + the index-first/reuse-first memory protocol. (Adaptive pipeline and Verification adopted from AWS AI-DLC — see [`docs/09`](docs/09-aidlc-takeaways.md), [ADR-10](docs/07-decisions.md).)
 - [`.claude/commands/sdd.md`](.claude/commands/sdd.md) — the `/sdd "<requirement>"` entry point that triages, states a right-sized plan, and runs the pipeline against the seeded memory.
 
-This is a strawman for review, not a finished agent — phase subagents (`.claude/agents/`) are Phase 1.
+**Phase 1 (in progress)** — the first two phase subagents are drafted:
+- [`.claude/agents/intake.md`](.claude/agents/intake.md) — structures + quality-scores the requirement, runs the clarification gate, carries `REQ-01..04` Verification.
+- [`.claude/agents/design.md`](.claude/agents/design.md) — reuse-first analysis against the asset catalog, tradeoffs + alternatives, standards compliance, `DSN-01..04` Verification.
+
+Remaining subagents (`analysis`, `self_critique`, `spec`, `build`, `review`, `learn`, `memory-curator`) and the thin skills are next.
 
 ## The one-paragraph thesis
 
