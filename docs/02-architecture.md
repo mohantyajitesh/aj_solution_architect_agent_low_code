@@ -100,10 +100,14 @@ GitHub is the source of truth for memory, agents, skills, and `AGENTS.md`. Local
 
 ## 2.3 Control flow (the pipeline as instructions)
 
-The orchestrator drives this sequence; loop-backs and gates are expressed as rules in `AGENTS.md`, not as graph edges:
+The orchestrator drives this sequence; loop-backs and gates are expressed as rules in `AGENTS.md`, not as graph edges. The pipeline is **adaptive** (a triage step right-sizes the phase set — borrowed from AWS AI-DLC, see [`docs/09` T1](09-aidlc-takeaways.md)) and each phase carries a **Verification** checklist it must pass before progressing ([`docs/09` T2](09-aidlc-takeaways.md), [`docs/04` §4.3a](04-control-and-enforcement.md)):
 
 ```
 /sdd "<requirement>"
+  → triage ──(complexity?)──┬─ trivial  → intake-lite → spec   (skip analysis/design/critique)
+                            ├─ standard → full pipeline (below)
+                            └─ complex  → decompose into Units of Work → run pipeline per unit
+  ── full pipeline ──
   → intake ──(confidence ≥ threshold?)──┬─ yes → analysis
                                          └─ no  → ASK USER (clarify) → intake
   → analysis → design → critique ──(verdict)──┬─ PASS          → spec
@@ -121,6 +125,10 @@ Two things to be honest about here, both elaborated in [`docs/04`](04-control-an
 
 1. **This sequence is *instructed*, not *enforced*.** The orchestrator follows it because `AGENTS.md` tells it to. A graph made skipping impossible; here it is merely strongly discouraged. The mitigation path (hooks) is designed-for but deferred.
 2. **Cycle limits are advisory** until a hook (or a tiny `state.json` counter maintained by the orchestrator) makes them hard. In interactive use the human is the backstop against runaway loops.
+
+**Triage (T1).** The first step classifies the request as *trivial / standard / complex* and selects the phase set — small requests are not over-processed, large ones are decomposed into Units of Work and run per unit. This directly serves the ≥80%-across-use-cases target, whose main failure mode is a fixed pipeline that over-processes the small and under-decomposes the large.
+
+**Verification gates (T2).** Between "soft instruction" and "hard hooks" sits a middle tier: each phase ends with an explicit `## Verification` checklist (carrying rule IDs like `SPEC-01`) that the phase must satisfy and record in its artifact before the orchestrator advances. This raises the reliability floor with zero code, and the same rule IDs become the assertions a future hook would enforce. See [`docs/04` §4.3a](04-control-and-enforcement.md).
 
 ## 2.4 State & resumption
 

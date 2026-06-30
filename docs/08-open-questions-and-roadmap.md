@@ -25,17 +25,17 @@ This design is a **draft for collaborative review**. This document lists what is
 
 ### Scope
 12. **Quality threshold.** Keep the original's `70/100`, or recalibrate now that scoring feeds a conversational gate rather than a hard edge?
-13. **Phase set.** Keep all 8 phases, or is `self_critique` foldable into `design` for a leaner pipeline?
+13. ~~**Phase set.** Keep all 8 phases, or is `self_critique` foldable into `design`?~~ **Resolved (ADR-10):** the pipeline is now *adaptive* — a `triage` step selects the phase set per request complexity (trivial skips analysis/design/critique; standard runs full; complex decomposes into Units of Work). `self_critique` stays a distinct phase but only runs on standard/complex requests.
 
 ## 8.2 Proposed build sequence (once the design is agreed)
 
 > No code is written until the design is signed off. This is the *intended* order, not a commitment.
 
-**Phase 0 — Skeleton (markdown only)**
-- `AGENTS.md` (persona + pipeline contract + gate rules + memory protocol)
+**Phase 0 — Skeleton (markdown only)** ✅ *strawman drafted*
+- `AGENTS.md` (persona + **adaptive pipeline w/ triage** + **Verification gates** + gate rules + memory protocol)
 - `/sdd` command
-- Empty `workspace/` + `memory/` with `INDEX.md` and one seed lesson
-- *Exit test:* `/sdd` starts a task and the orchestrator narrates the intended phase plan.
+- `workspace/` + seeded `memory/` (`INDEX.md`, asset catalog, standard)
+- *Exit test:* `/sdd` triages a request, narrates the right-sized phase plan, and cites the Verification checks it will run.
 
 **Phase 1 — Phase subagents**
 - `intake` → `analysis` → `design` → `critique` → `spec` → `review` → `learn` + `memory-curator`

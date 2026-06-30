@@ -91,3 +91,15 @@ Short, ADR-style records of the settled decisions behind this design. Each: cont
 **Decision.** Add two human-authored categories: **`assets`** (a capability catalog with explicit "when to use / when NOT to use" fields) and **`standards`**. Extend front-matter with `source`, `authority`, `status`, `systems`. Reference content uses clean-slug filenames (not the dated/task convention). `AGENTS.md` instructs **reuse-first** design (consult the asset catalog during analysis/design; prefer extend over greenfield) and treats `authority: reference` entries as constraints that outrank experiential lessons on conflict. Always-true constraints go in `AGENTS.md`, not memory; situational knowledge goes in memory.
 
 **Consequences.** (+) The agent performs reuse analysis against the real system landscape, avoiding duplicate builds, and honors org standards. (+) Human-curatable, git-versioned knowledge base. (−) Grows the corpus faster → approaches the token/vector crossover sooner (mitigated by index-first retrieval + the curator + a derived hierarchical index). (−) Reference content needs a human owner for freshness; tooling provides audit trail and housekeeping, not correctness.
+
+---
+
+## ADR-10 — Adaptive pipeline + Verification sections (adopted from AWS AI-DLC)
+
+**Context.** Research into AWS AI-DLC ([`docs/09`](../docs/09-aidlc-takeaways.md)) surfaced two low-cost improvements that fit our design: (a) an *adaptive* pipeline that right-sizes the phase set to request complexity, and (b) per-phase *Verification* checklists the model self-satisfies before progressing. The original (and our v1 draft) ran a fixed 8-phase pipeline with purely instructional control.
+
+**Decision.** Adopt both. **T1:** a `triage` step classifies each request *trivial / standard / complex* and selects the phase set (trivial skips analysis/design/critique; complex decomposes into Units of Work run per unit). **T2:** every phase ends with a `## Verification` block of concrete, rule-ID'd checks recorded in its artifact; the orchestrator advances only on pass. This establishes a control "tier 1.5" between soft instruction and deferred hooks ([`docs/04` §4.3a](../docs/04-control-and-enforcement.md)). This resolves open question Q13 (the pipeline is variable, not fixed).
+
+**Consequences.** (+) Right-sized process improves the ≥80%-across-use-cases target; large requests decompose instead of running one unfocused pass. (+) Verification raises reliability at zero code cost and pre-authors the invariants hooks will later enforce. (−) Triage adds one upfront classification step (cheap). (−) Verification is still self-certified, not hard-enforced — it narrows, not closes, the enforcement gap.
+
+**Not adopted from AI-DLC:** the multi-human "Mob" rituals, the Operations phase, and full-SDLC breadth — out of scope for a single-user, architecture-centric tool ([`docs/09` §9.4](../docs/09-aidlc-takeaways.md)).

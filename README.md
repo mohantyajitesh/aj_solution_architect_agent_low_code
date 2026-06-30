@@ -54,6 +54,15 @@ The repo includes a small **seeded memory store** ([`memory/`](memory/)) so retr
 
 This demonstrates manual enrichment with **organizational context** — see [`docs/03` §3.6a](docs/03-memory-vectorless-rag.md).
 
+## Phase 0 strawman (buildable skeleton)
+
+A first runnable skeleton now exists alongside the design:
+
+- [`AGENTS.md`](AGENTS.md) — the orchestrator: persona + **adaptive pipeline (triage)** + **Verification gates** + human gates + the index-first/reuse-first memory protocol. (Adaptive pipeline and Verification adopted from AWS AI-DLC — see [`docs/09`](docs/09-aidlc-takeaways.md), [ADR-10](docs/07-decisions.md).)
+- [`.claude/commands/sdd.md`](.claude/commands/sdd.md) — the `/sdd "<requirement>"` entry point that triages, states a right-sized plan, and runs the pipeline against the seeded memory.
+
+This is a strawman for review, not a finished agent — phase subagents (`.claude/agents/`) are Phase 1.
+
 ## The one-paragraph thesis
 
 The original design's value was an **enforced** pipeline — control flow guaranteed *outside* the LLM. A low-code Claude-native rebuild necessarily converts those hard structural guarantees into **subagent-orchestrated, instruction-driven** guarantees: softer, but recoverable to ~90% via hooks if and when we choose to add them. In exchange we get dramatically less code, cleaner per-phase context (subagents beat nodes for context isolation), zero retrieval infrastructure (vectorless memory), native human gates, and first-class distribution (plugins). We accept two conscious costs: **Claude lock-in** (the provider abstraction is gone) and **soft process enforcement until hooks are added**. Both are deliberate, reversible, and justified for a single-user conversational architect tool.

@@ -26,6 +26,25 @@ The honest summary: **we convert hard structural guarantees into soft, instructi
 - **Human gates** — arguably stronger, since conversation is inherently turn-based and the gates read as natural questions rather than CLI verbs.
 - **Capability boundaries** — subagent tool allowlists prevent whole classes of error (analysis can't write code; build can't rewrite requirements). This is a *form* of control the original did not have.
 
+## 4.3a Tier 1.5 — Verification sections (self-checks, no code)
+
+Between pure soft instruction (§4.1) and hard hooks (§4.4) sits a **middle tier borrowed from AWS AI-DLC** ([`docs/09` T2](09-aidlc-takeaways.md)): every phase ends with an explicit **`## Verification`** checklist of concrete, checkable conditions, each with a **rule ID**. The phase subagent must satisfy and record these *before the orchestrator advances*, and writes the pass/fail result into its artifact.
+
+```markdown
+## Verification (must pass before proceeding) — rules SPEC-01..03
+- [ ] SPEC-01: every acceptance criterion is independently verifiable
+- [ ] SPEC-02: file structure + interface definitions are complete
+- [ ] SPEC-03: explicit constraints ("do NOT build / do NOT use…") are present
+```
+
+Why this tier matters:
+
+- **It raises the soft-enforcement floor at zero code cost.** Asking the model to self-verify against *named, concrete* checks is markedly more reliable than a general instruction to "do good work" — it converts vague adherence into a checklist the model can be held to, in-context.
+- **It is the natural bridge to hooks.** Each rule ID (`SPEC-01`) is exactly what a future `PreToolUse`/`Stop` hook would assert deterministically (§4.4). Verification sections let us *specify* the invariants now and *enforce* them later without rewriting them — the rule catalog is authored once.
+- **It is auditable.** Pass/fail results recorded in the artifact give a per-phase trail, the low-code analogue of AI-DLC's rule-ID audit logs.
+
+Verification is **not** hard enforcement — a determined model can still self-certify incorrectly. But empirically it closes much of the gap, and it is the right first move before paying for hooks. Updated posture: **soft instruction → Verification self-checks (this tier) → hooks (deferred, surgical).**
+
 ## 4.4 The recovery mechanism: hooks as the deterministic seam (deferred)
 
 In Claude Code, **hooks** (`PreToolUse`, `PostToolUse`, `Stop`) are the one model-external, deterministic control surface — and they map almost one-to-one onto the LangGraph edges we removed. The plan is to **not build them yet**, but to design so that each lost guarantee corresponds to exactly one future hook:
